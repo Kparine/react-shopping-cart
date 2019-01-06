@@ -29,12 +29,39 @@ class App extends Component {
   }
 }
 
+addItemToCart = (product, quantity) => {
+
+  if(!quantity || product === 'Select an option...') return false
+  
+  const {id, name, priceInCents} = this.state.products.find(item => item.name === product)
+  
+  const newCartTotal = this.state.cartItemsList.reduce((acc, item) => {
+    if(item.product.name === product) item.quantity += Number(quantity)
+    acc.push(item)
+    return acc
+  }, [])
+  
+  const itemInCart = newCartTotal.find(item => item.product.name === product)
+
+  if(!itemInCart){
+    const newItem = {
+      product: { id, name, priceInCents },
+      quantity
+    }
+    newCartTotal.push(newItem)
+  } 
+  
+  this.setState({
+    cartItemsList: newCartTotal
+  })
+}
 
   render() {
     return (
       <div>
         <CartHeader />
         <CartItems  cartItemsList={this.state.cartItemsList} />
+        <AddItem products={this.state.products} addItemToCart={this.addItemToCart}/>
         <CartFooter />
       </div>
     );
